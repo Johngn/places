@@ -18,6 +18,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
   } else {
     const data = await prisma.Place.findMany();
+    // const data = { message: 'Coming soon' };
 
     if (!data) {
       return res.status(404).json({ message: 'No places found' });
