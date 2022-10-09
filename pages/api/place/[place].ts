@@ -12,7 +12,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return;
   }
 
-  const data = await prisma.Place.findFirst({
+  const data = await prisma.place.findFirst({
     where: {
       name: {
         equals: place,
