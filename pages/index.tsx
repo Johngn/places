@@ -51,10 +51,20 @@ type HomeProps = {
 };
 
 const Home: NextPage<HomeProps> = ({ places }) => {
-  // console.log(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
+  const addLocation = async (event: any) => {
+    const data = {
+      name: 'test',
+      lat: event.lngLat.lat,
+      lng: event.lngLat.lng,
+    };
 
-  const addLocation = (event: any) => {
-    console.log(event);
+    await fetch('http://localhost:3000/api/places', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+    });
   };
 
   return (
@@ -74,12 +84,13 @@ const Home: NextPage<HomeProps> = ({ places }) => {
           initialViewState={{
             longitude: 0,
             latitude: 30,
-            zoom: 1.8,
+            zoom: 2.5,
           }}
           // style={{ width: '100%', height: '100%' }}
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
-          mapStyle="mapbox://styles/mapbox/streets-v9"
+          mapStyle="mapbox://styles/jgillan/cl91nwdzy002u14oa9a8xrn98"
           onMouseUp={event => addLocation(event)}
+          projection="globe"
         >
           {places.map(place => (
             <Marker
