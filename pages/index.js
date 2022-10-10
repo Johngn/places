@@ -6,8 +6,10 @@ import Map, { Layer } from 'react-map-gl';
 import * as mapStyles from '../styles/map.json';
 import { useRouter } from 'next/router';
 
+console.log(`${process.env.NEXT_PUBLIC_API_URL}/api/places`);
+
 export const getServerSideProps = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/places`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/places`);
   const places = await res.json();
 
   return { props: { places } };
@@ -98,7 +100,7 @@ const Home = ({ places }) => {
         lng: event.lngLat.lng,
       };
 
-      await fetch(`${process.env.NEXT_PUBLIC_URL}/api/places`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/places`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
