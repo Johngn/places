@@ -5,6 +5,7 @@ import { GetServerSideProps } from 'next';
 import Map from 'react-map-gl';
 import mapStyles from '../styles/map.json';
 import { useRouter } from 'next/router';
+console.log(mapStyles);
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const res = await fetch('http://localhost:3000/api/places');
@@ -118,10 +119,6 @@ const Home: NextPage<HomeProps> = ({ places }) => {
         <title>Places</title>
         <meta name="description" content="All the places I've visited" />
         <link rel="icon" href="/favicon.ico" />
-        <link
-          href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css"
-          rel="stylesheet"
-        ></link>
       </Head>
 
       <div className="w-screen h-screen">
