@@ -16,4 +16,5 @@ model Place {
   name      String   @db.VarChar(255)
   lat       Float
   lng       Float
+  isoCode   String   @db.VarChar(255)
 }

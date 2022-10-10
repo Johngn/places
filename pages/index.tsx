@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { GetStaticProps, GetStaticPaths, GetServerSideProps } from 'next';
-import Map, { Marker } from 'react-map-gl';
+import { GetServerSideProps } from 'next';
+import Map from 'react-map-gl';
 import mapStyles from '../styles/map.json';
 import { useRouter } from 'next/router';
 
@@ -15,6 +15,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
 type placeType = {
   id: React.Key;
+  isoCode: String;
   name: String;
   lat: number;
   lng: number;
@@ -26,12 +27,19 @@ type HomeProps = {
 
 const Home: NextPage<HomeProps> = ({ places }) => {
   const [newMapStyles, setNewMapStyles] = useState(mapStyles);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const countriesList = places.map(place => place.name.toString());
+  const refreshData = () => {
+    router.replace(router.asPath);
+  };
 
-    const spreadMapStyles = { ...newMapStyles }; // Need this to update state correctly
+  useEffect(() => {
+    const countriesList = places.map(place =>
+      place.isoCode.toString().toUpperCase()
+    );
+
+    const spreadMapStyles = { ...newMapStyles }; // Need to do this to update state correctly
 
     const modifiedLayers = spreadMapStyles.layers.map(layer => {
       if (layer.id === 'country-boundaries') {
@@ -44,10 +52,10 @@ const Home: NextPage<HomeProps> = ({ places }) => {
           paint: {
             'fill-color': [
               'match',
-              ['get', 'name_en'],
-              countriesList,
-              'hsla(190, 100%, 70%, 0.8)',
-              'hsla(240, 23%, 75%,0)',
+              ['get', 'iso_3166_1'],
+              ['', ...countriesList],
+              'hsla(190, 100%, 70%, 0.4)', // Colour of selected countries
+              'hsla(240, 23%, 75%, 0)', // Colour of rest of countries
             ],
           },
         };
@@ -63,11 +71,12 @@ const Home: NextPage<HomeProps> = ({ places }) => {
     });
   }, [places]);
 
-  const refreshData = () => {
-    router.replace(router.asPath);
-  };
+  useEffect(() => {
+    setLoading(false);
+  }, [newMapStyles]);
 
   const addLocation = async (event: any) => {
+    setLoading(true);
     // Reverse Geocoding
     const res = await fetch(
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${event.lngLat.lng},${event.lngLat.lat}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}`
@@ -81,7 +90,9 @@ const Home: NextPage<HomeProps> = ({ places }) => {
     });
 
     if (countryLevel.length > 0) {
+      // Check if click was made within country
       const data = {
+        isoCode: countryLevel[0].properties.short_code,
         name: countryLevel[0].text,
         lat: event.lngLat.lat,
         lng: event.lngLat.lng,
@@ -96,6 +107,8 @@ const Home: NextPage<HomeProps> = ({ places }) => {
       });
 
       refreshData(); // Run getServerSideProps again
+    } else {
+      setLoading(false);
     }
   };
 
@@ -116,12 +129,11 @@ const Home: NextPage<HomeProps> = ({ places }) => {
           initialViewState={{
             longitude: 0,
             latitude: 40,
-            zoom: 3,
+            zoom: 2.7,
           }}
-          // style={{ width: '100%', height: '100%' }}
+          cursor={loading ? 'wait' : 'auto'}
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
           mapStyle={newMapStyles}
-          // onMouseUp={event => addLocation(event)}
           onContextMenu={event => addLocation(event)}
           projection="globe"
         ></Map>

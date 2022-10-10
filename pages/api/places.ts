@@ -24,6 +24,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       const createPlace = await prisma.place.create({
         data: {
+          isoCode: req.body.isoCode,
           name: req.body.name,
           lat: req.body.lat,
           lng: req.body.lng,
