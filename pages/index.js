@@ -1,32 +1,32 @@
 import { useState, useEffect } from 'react';
-import type { NextPage } from 'next';
+// import type { NextPage } from 'next';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
-import Map from 'react-map-gl';
+import Map, { Layer } from 'react-map-gl';
 import mapStyles from '../styles/map.json';
 import { useRouter } from 'next/router';
 console.log(mapStyles);
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps = async () => {
   const res = await fetch('http://localhost:3000/api/places');
   const places = await res.json();
 
   return { props: { places } };
 };
 
-type placeType = {
-  id: React.Key;
-  isoCode: String;
-  name: String;
-  lat: number;
-  lng: number;
-};
+// type placeType = {
+//   id: React.Key;
+//   isoCode: String;
+//   name: String;
+//   lat: number;
+//   lng: number;
+// };
 
-type HomeProps = {
-  places: placeType[];
-};
+// type HomeProps = {
+//   places: placeType[];
+// };
 
-const Home: NextPage<HomeProps> = ({ places }) => {
+const Home = ({ places }) => {
   const [newMapStyles, setNewMapStyles] = useState(mapStyles);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -76,7 +76,7 @@ const Home: NextPage<HomeProps> = ({ places }) => {
     setLoading(false);
   }, [newMapStyles]);
 
-  const addLocation = async (event: any) => {
+  const addLocation = async event => {
     setLoading(true);
     // Reverse Geocoding
     const res = await fetch(
@@ -85,7 +85,7 @@ const Home: NextPage<HomeProps> = ({ places }) => {
 
     const place = await res.json();
 
-    const countryLevel = place.features.filter((addressLevel: any) => {
+    const countryLevel = place.features.filter(addressLevel => {
       const { place_type } = addressLevel;
       return place_type[0] === 'country';
     });
@@ -113,6 +113,17 @@ const Home: NextPage<HomeProps> = ({ places }) => {
     }
   };
 
+  // const parkLayer = {
+  //   id: 'landuse_park',
+  //   type: 'fill',
+  //   source: 'mapbox',
+  //   'source-layer': 'landuse',
+  //   filter: ['==', 'class', 'park'],
+  //   paint: {
+  //     'fill-color': '#4E3FC8',
+  //   },
+  // };
+
   return (
     <div>
       <Head>
@@ -130,7 +141,7 @@ const Home: NextPage<HomeProps> = ({ places }) => {
           }}
           cursor={loading ? 'wait' : 'auto'}
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
-          mapStyle={'mapbox://styles/jgillan/cl91nwdzy002u14oa9a8xrn98'}
+          mapStyle={newMapStyles}
           onContextMenu={event => addLocation(event)}
           projection="globe"
         ></Map>
