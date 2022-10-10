@@ -3,12 +3,11 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
 import Map, { Layer } from 'react-map-gl';
-import mapStyles from '../styles/map.json';
+import * as mapStyles from '../styles/map.json';
 import { useRouter } from 'next/router';
-console.log(mapStyles);
 
 export const getServerSideProps = async () => {
-  const res = await fetch('http://localhost:3000/api/places');
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/places`);
   const places = await res.json();
 
   return { props: { places } };
@@ -99,7 +98,7 @@ const Home = ({ places }) => {
         lng: event.lngLat.lng,
       };
 
-      await fetch('http://localhost:3000/api/places', {
+      await fetch(`${process.env.NEXT_PUBLIC_URL}/api/places`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
