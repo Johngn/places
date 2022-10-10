@@ -130,7 +130,7 @@ const Home: NextPage<HomeProps> = ({ places }) => {
           }}
           cursor={loading ? 'wait' : 'auto'}
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
-          mapStyle={newMapStyles}
+          mapStyle={'mapbox://styles/jgillan/cl91nwdzy002u14oa9a8xrn98'}
           onContextMenu={event => addLocation(event)}
           projection="globe"
         ></Map>
