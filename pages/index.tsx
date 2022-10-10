@@ -1,14 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import Image from 'next/image';
 import { GetStaticProps, GetStaticPaths, GetServerSideProps } from 'next';
 import Map, { Marker } from 'react-map-gl';
-import styles from '../styles/map.json';
-import layers from '../styles/layers.json';
+import mapStyles from '../styles/map.json';
+import { useRouter } from 'next/router';
 
-export const getServerSideProps: GetServerSideProps = async context => {
-  //Fetch data from external API
+export const getServerSideProps: GetServerSideProps = async () => {
   const res = await fetch('http://localhost:3000/api/places');
   const places = await res.json();
 
@@ -27,18 +25,50 @@ type HomeProps = {
 };
 
 const Home: NextPage<HomeProps> = ({ places }) => {
-  const [countries, setCountries] = useState([
-    'United States',
-    'Canada',
-    'United Kingdom',
-    'France',
-    'Ireland',
-    'Germany',
-  ]);
-  const countriesList = places.map(place => place.name);
-  console.log(countriesList);
+  const [newMapStyles, setNewMapStyles] = useState(mapStyles);
+  const router = useRouter();
+
+  useEffect(() => {
+    const countriesList = places.map(place => place.name.toString());
+
+    const spreadMapStyles = { ...newMapStyles }; // Need this to update state correctly
+
+    const modifiedLayers = spreadMapStyles.layers.map(layer => {
+      if (layer.id === 'country-boundaries') {
+        const modifiedLayer = {
+          id: 'country-boundaries',
+          type: 'fill',
+          source: 'composite',
+          'source-layer': 'country_boundaries',
+          layout: {},
+          paint: {
+            'fill-color': [
+              'match',
+              ['get', 'name_en'],
+              countriesList,
+              'hsla(190, 100%, 70%, 0.8)',
+              'hsla(240, 23%, 75%,0)',
+            ],
+          },
+        };
+        return modifiedLayer;
+      } else {
+        return layer;
+      }
+    });
+
+    setNewMapStyles({
+      ...spreadMapStyles,
+      layers: modifiedLayers,
+    });
+  }, [places]);
+
+  const refreshData = () => {
+    router.replace(router.asPath);
+  };
 
   const addLocation = async (event: any) => {
+    // Reverse Geocoding
     const res = await fetch(
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${event.lngLat.lng},${event.lngLat.lat}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}`
     );
@@ -51,7 +81,6 @@ const Home: NextPage<HomeProps> = ({ places }) => {
     });
 
     if (countryLevel.length > 0) {
-      console.log(countryLevel[0].text);
       const data = {
         name: countryLevel[0].text,
         lat: event.lngLat.lat,
@@ -65,6 +94,8 @@ const Home: NextPage<HomeProps> = ({ places }) => {
           'Content-Type': 'application/json; charset=utf-8',
         },
       });
+
+      refreshData(); // Run getServerSideProps again
     }
   };
 
@@ -84,42 +115,14 @@ const Home: NextPage<HomeProps> = ({ places }) => {
         <Map
           initialViewState={{
             longitude: 0,
-            latitude: 0,
-            zoom: 2.5,
+            latitude: 40,
+            zoom: 3,
           }}
           // style={{ width: '100%', height: '100%' }}
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
-          mapStyle={{
-            ...styles,
-            // ...layers,
-            // layers: [
-            //   {
-            //     id: 'country-boundaries (1)',
-            //     type: 'fill',
-            //     source: 'composite',
-            //     'source-layer': 'country_boundaries',
-            //     layout: {},
-            //     paint: { 'fill-color': 'hsl(100, 73%, 56%)' },
-            //   },
-            //   {
-            //     id: 'country-boundaries',
-            //     type: 'fill',
-            //     source: 'composite',
-            //     'source-layer': 'country_boundaries',
-            //     layout: {},
-            //     paint: {
-            //       'fill-color': [
-            //         'match',
-            //         ['get', 'name_en'],
-            //         countriesList,
-            //         'hsla(0, 0, 0, 0)',
-            //         'hsl(50, 73%, 56%)',
-            //       ],
-            //     },
-            //   },
-            // ],
-          }}
+          mapStyle={newMapStyles}
           // onMouseUp={event => addLocation(event)}
+          onContextMenu={event => addLocation(event)}
           projection="globe"
         ></Map>
       </div>
