@@ -119,6 +119,18 @@ const Home = ({ places }) => {
           onContextMenu={event => addLocation(event)}
           projection="globe"
         ></Map>
+
+        <div className="absolute p-2 top-1 left-5 rounded-md">
+          <h1 className="text-8xl mb-2 text-cyan-300">{places.length}</h1>
+
+          <div className="h-[calc(100vh-9rem)] overflow-y-auto scrollbar-hide">
+            {places.map(place => (
+              <h2 className="uppercase text-cyan-300">{place.name}</h2>
+            ))}
+          </div>
+        </div>
+
+        <div className="absolute p-2 top-1 right-5 rounded-md"></div>
       </div>
     </div>
   );
