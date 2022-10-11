@@ -68,7 +68,7 @@ const Home = ({ places }) => {
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${event.lngLat.lng},${event.lngLat.lat}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}`
     );
 
-    const place = await res.json(); //test
+    const place = await res.json();
 
     const countryLevel = place.features.filter(addressLevel => {
       const { place_type } = addressLevel;
@@ -89,7 +89,6 @@ const Home = ({ places }) => {
         body: JSON.stringify(data),
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
-          'Access-Control-Allow-Origin': 'https://places-chi.vercel.app',
         },
       });
 
