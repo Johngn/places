@@ -4,7 +4,8 @@ import Map from 'react-map-gl';
 import * as mapStyles from '../styles/map.json';
 import { useRouter } from 'next/router';
 
-export const getServerSideProps = async () => {
+export const getServerSideProps = async ctx => {
+  console.log(ctx);
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/places`);
   const places = await res.json();
 
@@ -125,7 +126,9 @@ const Home = ({ places }) => {
 
           <div className="h-[calc(100vh-9rem)] overflow-y-auto scrollbar-hide">
             {places.map(place => (
-              <h2 className="uppercase text-cyan-300">{place.name}</h2>
+              <h2 key={place.name} className="uppercase text-cyan-300">
+                {place.name}
+              </h2>
             ))}
           </div>
         </div>
