@@ -17,6 +17,8 @@ model Place {
   lat       Float
   lng       Float
   isoCode   String   @db.VarChar(255)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Account {
@@ -54,6 +56,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  Place         Place[]
 }
 
 model VerificationToken {
