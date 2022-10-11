@@ -40,7 +40,7 @@ const Home = ({ places }) => {
               'match',
               ['get', 'iso_3166_1'],
               ['', ...countriesList],
-              'hsla(190, 100%, 70%, 0.4)', // Colour of selected countries
+              'hsla(190, 50%, 50%, 1)', // Colour of selected countries
               'hsla(240, 23%, 75%, 0)', // Colour of rest of countries
             ],
           },
