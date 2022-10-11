@@ -89,7 +89,7 @@ const Home = ({ places }) => {
         body: JSON.stringify(data),
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
-          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Origin': 'https://places-chi.vercel.app',
         },
       });
 
