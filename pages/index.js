@@ -1,12 +1,8 @@
 import { useState, useEffect } from 'react';
-// import type { NextPage } from 'next';
 import Head from 'next/head';
-import { GetServerSideProps } from 'next';
-import Map, { Layer } from 'react-map-gl';
+import Map from 'react-map-gl';
 import * as mapStyles from '../styles/map.json';
 import { useRouter } from 'next/router';
-
-console.log(`${process.env.NEXT_PUBLIC_API_URL}/api/places`);
 
 export const getServerSideProps = async () => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/places`);
@@ -14,18 +10,6 @@ export const getServerSideProps = async () => {
 
   return { props: { places } };
 };
-
-// type placeType = {
-//   id: React.Key;
-//   isoCode: String;
-//   name: String;
-//   lat: number;
-//   lng: number;
-// };
-
-// type HomeProps = {
-//   places: placeType[];
-// };
 
 const Home = ({ places }) => {
   const [newMapStyles, setNewMapStyles] = useState(mapStyles);
@@ -113,17 +97,6 @@ const Home = ({ places }) => {
       setLoading(false);
     }
   };
-
-  // const parkLayer = {
-  //   id: 'landuse_park',
-  //   type: 'fill',
-  //   source: 'mapbox',
-  //   'source-layer': 'landuse',
-  //   filter: ['==', 'class', 'park'],
-  //   paint: {
-  //     'fill-color': '#4E3FC8',
-  //   },
-  // };
 
   return (
     <div>
