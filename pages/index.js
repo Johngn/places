@@ -3,9 +3,9 @@ import Head from 'next/head';
 import Map from 'react-map-gl';
 import * as mapStyles from '../styles/map.json';
 import { useRouter } from 'next/router';
+import { useSession, signIn, signOut } from 'next-auth/react';
 
 export const getServerSideProps = async ctx => {
-  console.log(ctx);
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/places`);
   const places = await res.json();
 
@@ -16,6 +16,8 @@ const Home = ({ places }) => {
   const [newMapStyles, setNewMapStyles] = useState(mapStyles);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { data: session } = useSession();
+  console.log(session);
 
   const refreshData = () => {
     router.replace(router.asPath);
@@ -99,43 +101,64 @@ const Home = ({ places }) => {
     }
   };
 
-  return (
-    <div>
-      <Head>
-        <title>Places</title>
-        <meta name="description" content="All the places I've visited" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+  if (session) {
+    return (
+      <>
+        <div>
+          <Head>
+            <title>Places</title>
+            <meta name="description" content="All the places I've visited" />
+            <link rel="icon" href="/favicon.ico" />
+          </Head>
 
-      <div className="w-screen h-screen">
-        <Map
-          initialViewState={{
-            longitude: 0,
-            latitude: 40,
-            zoom: 2.7,
-          }}
-          cursor={loading ? 'wait' : 'auto'}
-          mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
-          mapStyle={newMapStyles}
-          onContextMenu={event => addLocation(event)}
-          projection="globe"
-        ></Map>
+          <div className="w-screen h-screen">
+            <Map
+              initialViewState={{
+                longitude: 0,
+                latitude: 40,
+                zoom: 2.7,
+              }}
+              cursor={loading ? 'wait' : 'auto'}
+              mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
+              mapStyle={newMapStyles}
+              onDblClick={event => addLocation(event)}
+              doubleClickZoom={false}
+              projection="globe"
+            ></Map>
 
-        <div className="absolute p-2 top-1 left-5 rounded-md">
-          <h1 className="text-8xl mb-2 text-cyan-300">{places.length}</h1>
+            <div className="absolute top-5 right-5">
+              <button
+                className="rounded-full bg-cyan-300 p-3 text-lg "
+                onClick={() => signOut()}
+              >
+                Sign out
+              </button>
+            </div>
 
-          <div className="h-[calc(100vh-9rem)] overflow-y-auto scrollbar-hide">
-            {places.map(place => (
-              <h2 key={place.name} className="uppercase text-cyan-300">
-                {place.name}
-              </h2>
-            ))}
+            <div className="absolute p-2 top-1 left-5 rounded-md">
+              <h1 className="text-8xl mb-2 text-cyan-300">{places.length}</h1>
+
+              <div className="h-[calc(100vh-9rem)] overflow-y-auto scrollbar-hide">
+                {places.map(place => (
+                  <h2 key={place.name} className="uppercase text-cyan-300">
+                    {place.name}
+                  </h2>
+                ))}
+              </div>
+            </div>
+
+            <div className="absolute p-2 top-1 right-5 rounded-md"></div>
           </div>
         </div>
+      </>
+    );
+  }
 
-        <div className="absolute p-2 top-1 right-5 rounded-md"></div>
-      </div>
-    </div>
+  return (
+    <>
+      Not signed in <br />
+      <button onClick={() => signIn()}>Sign in</button>
+    </>
   );
 };
 
