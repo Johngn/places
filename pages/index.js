@@ -5,9 +5,24 @@ import * as mapStyles from '../styles/map.json';
 import { useRouter } from 'next/router';
 import { useSession, signIn, signOut } from 'next-auth/react';
 
-export const getServerSideProps = async ctx => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/places`);
-  const places = await res.json();
+export const getServerSideProps = async ({ req }) => {
+  const session = req.cookies['next-auth.session-token'];
+
+  const sessionRecord = await prisma.session.findUnique({
+    where: {
+      sessionToken: session,
+    },
+  });
+
+  const data = await prisma.place.findMany({
+    where: {
+      userId: {
+        equals: sessionRecord?.userId,
+      },
+    },
+  });
+
+  const places = data ? JSON.parse(JSON.stringify(data)) : [];
 
   return { props: { places } };
 };
@@ -17,7 +32,6 @@ const Home = ({ places }) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
-  // console.log(session);
 
   const refreshData = () => {
     router.replace(router.asPath);

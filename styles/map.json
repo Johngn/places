@@ -288,88 +288,6 @@
           }
       },
       {
-          "id": "country-label",
-          "type": "symbol",
-          "metadata": {
-              "mapbox:featureComponent": "place-labels",
-              "mapbox:group": "Place labels, place-labels"
-          },
-          "source": "composite",
-          "source-layer": "place_label",
-          "minzoom": 1,
-          "maxzoom": 10,
-          "filter": [
-              "match",
-              ["get", "class"],
-              "country",
-              ["match", ["get", "worldview"], ["all", "US"], true, false],
-              "disputed_country",
-              [
-                  "all",
-                  ["==", ["get", "disputed"], "true"],
-                  ["match", ["get", "worldview"], ["all", "US"], true, false]
-              ],
-              false
-          ],
-          "layout": {
-              "icon-image": "",
-              "text-field": ["coalesce", ["get", "name_en"], ["get", "name"]],
-              "text-transform": "uppercase",
-              "text-line-height": 1.1,
-              "text-max-width": 6,
-              "text-font": [
-                  "Open Sans ExtraBold",
-                  "Arial Unicode MS Regular"
-              ],
-              "text-radial-offset": ["step", ["zoom"], 0.6, 8, 0],
-              "text-size": [
-                  "interpolate",
-                  ["cubic-bezier", 0.2, 0, 0.7, 1],
-                  ["zoom"],
-                  1,
-                  [
-                      "step",
-                      ["get", "symbolrank"],
-                      12.100000000000001,
-                      4,
-                      9.9,
-                      5,
-                      8.8
-                  ],
-                  9,
-                  [
-                      "step",
-                      ["get", "symbolrank"],
-                      24.200000000000003,
-                      4,
-                      20.900000000000002,
-                      5,
-                      18.700000000000003
-                  ]
-              ]
-          },
-          "paint": {
-              "icon-opacity": [
-                  "step",
-                  ["zoom"],
-                  ["case", ["has", "text_anchor"], 1, 0],
-                  7,
-                  0
-              ],
-              "text-color": "hsl(212, 8%, 84%)",
-              "text-halo-color": [
-                  "interpolate",
-                  ["linear"],
-                  ["zoom"],
-                  2,
-                  "hsla(216, 43%, 0%, 0.75)",
-                  3,
-                  "hsl(216, 43%, 0%)"
-              ],
-              "text-halo-width": 1.25
-          }
-      },
-      {
           "id": "country-boundaries",
           "type": "fill",
           "source": "composite",
@@ -456,6 +374,88 @@
                   3
               ],
               "line-dasharray": [10, 0]
+          }
+      },
+      {
+          "id": "country-label",
+          "type": "symbol",
+          "metadata": {
+              "mapbox:featureComponent": "place-labels",
+              "mapbox:group": "Place labels, place-labels"
+          },
+          "source": "composite",
+          "source-layer": "place_label",
+          "minzoom": 1,
+          "maxzoom": 10,
+          "filter": [
+              "match",
+              ["get", "class"],
+              "country",
+              ["match", ["get", "worldview"], ["all", "US"], true, false],
+              "disputed_country",
+              [
+                  "all",
+                  ["==", ["get", "disputed"], "true"],
+                  ["match", ["get", "worldview"], ["all", "US"], true, false]
+              ],
+              false
+          ],
+          "layout": {
+              "icon-image": "",
+              "text-field": ["coalesce", ["get", "name_en"], ["get", "name"]],
+              "text-transform": "uppercase",
+              "text-line-height": 1.1,
+              "text-max-width": 6,
+              "text-font": [
+                  "Open Sans ExtraBold",
+                  "Arial Unicode MS Regular"
+              ],
+              "text-radial-offset": ["step", ["zoom"], 0.6, 8, 0],
+              "text-size": [
+                  "interpolate",
+                  ["cubic-bezier", 0.2, 0, 0.7, 1],
+                  ["zoom"],
+                  1,
+                  [
+                      "step",
+                      ["get", "symbolrank"],
+                      12.100000000000001,
+                      4,
+                      9.9,
+                      5,
+                      8.8
+                  ],
+                  9,
+                  [
+                      "step",
+                      ["get", "symbolrank"],
+                      24.200000000000003,
+                      4,
+                      20.900000000000002,
+                      5,
+                      18.700000000000003
+                  ]
+              ]
+          },
+          "paint": {
+              "icon-opacity": [
+                  "step",
+                  ["zoom"],
+                  ["case", ["has", "text_anchor"], 1, 0],
+                  7,
+                  0
+              ],
+              "text-color": "hsl(212, 8%, 84%)",
+              "text-halo-color": [
+                  "interpolate",
+                  ["linear"],
+                  ["zoom"],
+                  2,
+                  "hsla(216, 43%, 0%, 0.75)",
+                  3,
+                  "hsl(216, 43%, 0%)"
+              ],
+              "text-halo-width": 1.25
           }
       }
   ],
