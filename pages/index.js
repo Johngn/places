@@ -8,6 +8,10 @@ import { useSession, signIn, signOut } from 'next-auth/react';
 export const getServerSideProps = async ({ req }) => {
   const session = req.cookies['next-auth.session-token'];
 
+  let places = [];
+
+  if (!session) return { props: { places } };
+
   const sessionRecord = await prisma.session.findUnique({
     where: {
       sessionToken: session,
@@ -22,7 +26,7 @@ export const getServerSideProps = async ({ req }) => {
     },
   });
 
-  const places = data ? JSON.parse(JSON.stringify(data)) : [];
+  places = data ? JSON.parse(JSON.stringify(data)) : [];
 
   return { props: { places } };
 };
