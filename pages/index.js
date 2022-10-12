@@ -7,6 +7,7 @@ import { useSession, signIn, signOut } from 'next-auth/react';
 
 export const getServerSideProps = async ({ req }) => {
   const session = req.cookies['next-auth.session-token'];
+  console.log(req.cookies);
 
   let places = [];
 
