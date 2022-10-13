@@ -147,8 +147,8 @@ const Home = () => {
           <Map
             initialViewState={{
               longitude: 0,
-              latitude: 40,
-              zoom: 2.7,
+              latitude: 0,
+              zoom: 2.5,
             }}
             cursor={loading ? 'wait' : 'auto'}
             mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
