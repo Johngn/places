@@ -5,44 +5,14 @@ import * as mapStyles from '../styles/map.json';
 import { useRouter } from 'next/router';
 import { useSession, signIn, signOut } from 'next-auth/react';
 
-// export const getServerSideProps = async ({ req }) => {
-//   const session = req.cookies['next-auth.session-token'];
-//   console.log(req.cookies);
+//  NEED TO CHANGE CALLBACK URI IN GITHUB!!!!!!!
 
-//   let places = [];
-
-//   if (!session) return { props: { places } };
-
-//   const sessionRecord = await prisma.session.findUnique({
-//     where: {
-//       sessionToken: session,
-//     },
-//   });
-
-//   const data = await prisma.place.findMany({
-//     where: {
-//       userId: {
-//         equals: sessionRecord?.userId,
-//       },
-//     },
-//   });
-
-//   places = data ? JSON.parse(JSON.stringify(data)) : [];
-
-//   return { props: { places } };
-// };
-
-// const Home = ({ places }) => {
 const Home = () => {
   const [newMapStyles, setNewMapStyles] = useState(mapStyles);
   const [loading, setLoading] = useState(false);
   const [places, setPlaces] = useState([]);
   const router = useRouter();
   const { data: session } = useSession();
-
-  const refreshData = () => {
-    router.replace(router.asPath);
-  };
 
   const getPlaces = async () => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/places`);
@@ -127,7 +97,6 @@ const Home = () => {
         },
       });
 
-      // refreshData(); // Run getServerSideProps again
       getPlaces();
     } else {
       setLoading(false);
