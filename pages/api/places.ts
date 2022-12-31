@@ -1,12 +1,10 @@
-import prisma from '../../db/client';
-import { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
+import prisma from "../../db/client";
+import { NextApiRequest, NextApiResponse } from "next";
+import { getSession } from "next-auth/react";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
-  // console.log(session);
-  if (req.method === 'POST') {
-    // console.log(req.body);
+  if (req.method === "POST") {
     return createPlace(req, res);
   } else {
     return getAllPlaces(req, res);
@@ -15,7 +13,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 const getAllPlaces = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
-  if (!session) return res.status(401).json({ message: 'Not logged in' });
+  if (!session) return res.status(401).json({ message: "Not logged in" });
 
   try {
     const user = await prisma.user.findUnique({
@@ -24,7 +22,7 @@ const getAllPlaces = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    if (!user) return res.status(401).json({ message: 'User not found' });
+    if (!user) return res.status(401).json({ message: "User not found" });
 
     const data = await prisma.place.findMany({
       where: {
@@ -34,17 +32,17 @@ const getAllPlaces = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    if (!data) return res.status(404).json({ message: 'No places found' });
+    if (!data) return res.status(404).json({ message: "No places found" });
 
     return res.status(200).json(data);
   } catch (error) {
-    return res.status(404).json({ message: 'Server error' });
+    return res.status(404).json({ message: "Server error" });
   }
 };
 
 const createPlace = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
-  if (!session) return res.status(401).json({ message: 'Not logged in' });
+  if (!session) return res.status(401).json({ message: "Not logged in" });
 
   try {
     const user = await prisma.user.findUnique({
@@ -53,7 +51,7 @@ const createPlace = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    if (!user) return res.status(401).json({ message: 'User not found' });
+    if (!user) return res.status(401).json({ message: "User not found" });
 
     const findPlace = await prisma.place.findFirst({
       where: {
@@ -73,7 +71,7 @@ const createPlace = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
-      return res.status(200).json({ message: 'Country deleted' });
+      return res.status(200).json({ message: "Country deleted" });
     }
 
     const createPlace = await prisma.place.create({
@@ -88,6 +86,6 @@ const createPlace = async (req: NextApiRequest, res: NextApiResponse) => {
 
     return res.status(200).json(createPlace);
   } catch (error) {
-    return res.status(404).json({ message: 'Server error' });
+    return res.status(404).json({ message: "Server error" });
   }
 };
