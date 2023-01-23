@@ -14,6 +14,8 @@ const Home = () => {
   const router = useRouter();
   const { data: session } = useSession();
 
+  console.log(places);
+
   const getPlaces = async () => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/places`);
     setPlaces(await res.json());
