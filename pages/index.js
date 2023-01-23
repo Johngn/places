@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import Head from 'next/head';
-import Map from 'react-map-gl';
-import * as mapStyles from '../styles/map.json';
-import { useRouter } from 'next/router';
-import { useSession, signIn, signOut } from 'next-auth/react';
+import { useState, useEffect } from "react";
+import Head from "next/head";
+import Map from "react-map-gl";
+import * as mapStyles from "../styles/map.json";
+import { useRouter } from "next/router";
+import { useSession, signIn, signOut } from "next-auth/react";
 
 //  NEED TO CHANGE CALLBACK URI IN GITHUB!!!!!!!
 
@@ -24,7 +24,6 @@ const Home = () => {
   }, [session]);
 
   useEffect(() => {
-    console.log(places);
     const countriesList = places.map(place =>
       place.isoCode.toString().toUpperCase()
     );
@@ -33,20 +32,20 @@ const Home = () => {
     const spreadMapStyles = { ...newMapStyles }; // Need to do this to update state correctly
 
     const modifiedLayers = spreadMapStyles.layers.map(layer => {
-      if (layer.id === 'country-boundaries') {
+      if (layer.id === "country-boundaries") {
         const modifiedLayer = {
-          id: 'country-boundaries',
-          type: 'fill',
-          source: 'composite',
-          'source-layer': 'country_boundaries',
+          id: "country-boundaries",
+          type: "fill",
+          source: "composite",
+          "source-layer": "country_boundaries",
           layout: {},
           paint: {
-            'fill-color': [
-              'match',
-              ['get', 'iso_3166_1'],
-              ['', ...countriesList],
-              'hsla(190, 50%, 50%, 1)', // Colour of selected countries
-              'hsla(240, 23%, 75%, 0)', // Colour of rest of countries
+            "fill-color": [
+              "match",
+              ["get", "iso_3166_1"],
+              ["", ...countriesList],
+              "hsla(190, 50%, 50%, 1)", // Colour of selected countries
+              "hsla(240, 23%, 75%, 0)", // Colour of rest of countries
             ],
           },
         };
@@ -77,7 +76,7 @@ const Home = () => {
 
     const countryLevel = place.features.filter(addressLevel => {
       const { place_type } = addressLevel;
-      return place_type[0] === 'country';
+      return place_type[0] === "country";
     });
 
     if (countryLevel.length > 0) {
@@ -90,10 +89,10 @@ const Home = () => {
       };
 
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/places`, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(data),
         headers: {
-          'Content-Type': 'application/json; charset=utf-8',
+          "Content-Type": "application/json; charset=utf-8",
         },
       });
 
@@ -119,7 +118,7 @@ const Home = () => {
               latitude: 0,
               zoom: 2.5,
             }}
-            cursor={loading ? 'wait' : 'auto'}
+            cursor={loading ? "wait" : "auto"}
             mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
             mapStyle={session ? newMapStyles : mapStyles}
             onDblClick={event => session && addLocation(event)}
